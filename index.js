@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const User = require('./models/user');
 const ejsLayouts = require('express-ejs-layouts');
 
-app.listen(_PORT, () => console.log("Server is running on port", _PORT ));
+app.listen(_PORT, () => console.log("Server is running on" + _PORT + ', will be mapped to 8087' ));
 
 /* Initialize Passport */
 app.use(passport.initialize());

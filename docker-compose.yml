@@ -2,8 +2,26 @@ version: "3.3"
 
 services:
     app:
+      container_name: app
+      restart: always
       build: .
       volumes:
         - .:/usr/src/app
       ports:
         - "8087:8080"
+    mongo:
+      container_name: mongo
+      image: mongo
+      #restart: always === for dev purpose
+      #environment:
+      #  MONGO_INITDB_ROOT_USERNAME: user
+      #  MONGO_INITDB_ROOT_PASSWORD: pass
+      volumes:
+        - ./data:/data/db
+      ports:
+        - 27017:27017
+    #Just to seed data to mongo
+    mongo-seed:
+      build: ./mongo-seed
+      links:
+        - mongo

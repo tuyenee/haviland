@@ -24,5 +24,4 @@ module.exports = function(app) {
         successRedirect: '/',
         failureRedirect: '/login'
     }));
-        
 }
