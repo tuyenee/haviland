@@ -1,0 +1,1 @@
+mongoimport --host mongo --port 27017 --db haviland --collection Users --type json --file /initData/users.json --jsonArray
