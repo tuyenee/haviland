@@ -7,6 +7,8 @@ const passport = require('passport');
 const bodyParser = require('body-parser');
 const User = require('./models/user');
 const ejsLayouts = require('express-ejs-layouts');
+const flash = require('express-flash-messages');
+const session = require('express-session');
 
 app.listen(_PORT, () => console.log("Server is running on " + _PORT + ', will be mapped to 8087' ));
 
@@ -17,10 +19,17 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Mongo connection error:'));
 
 
+/* session */
+app.use(session({
+    secret: 'session-secret'
+}));
+
 /* Body Parser */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
+/* Flash messages */
+app.use(flash());
 
 /* Static files */
 app.use(express.static('public'));

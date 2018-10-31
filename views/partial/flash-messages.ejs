@@ -1,0 +1,13 @@
+<% Object.keys(messages).forEach(msgType => {%>
+    <% messages[msgType].forEach(msg => { %>
+        <div class="alert alert-<%=msgType%>" role="alert">
+            <%=msg %>
+        </div>
+    <%})%>
+<%})%>
+
+<script>
+$(".alert").delay(4000).slideUp(200, function() {
+    $(this).alert('close');
+});
+</script>
