@@ -15,22 +15,15 @@ services:
         - mongo
     mongo:
       container_name: mongo
-      image: mongo
-      #restart: always === removed for dev purpose
-      #environment:
-      #  MONGO_INITDB_ROOT_USERNAME: user
-      #  MONGO_INITDB_ROOT_PASSWORD: pass
-      #volumes:
-      #  - ./data:/data/db
-      ports:
-        - 27017:27017
-    #Just to seed data to mongo
-    mongo-seed:
-      container_name: mongo_seed
       build:
         context: ./
         dockerfile: Dockerfile.mongo-seed
-      links:
-        - mongo
-      depends_on:
-        - mongo
+      ports:
+        - 27017:27017
+      #restart: always === removed for dev purpose
+      environment:
+        MONGO_INITDB_DATABASE: haviland
+        #  MONGO_INITDB_ROOT_USERNAME: user
+        #  MONGO_INITDB_ROOT_PASSWORD: pass
+      #volumes:
+      #  - ./data:/data/db

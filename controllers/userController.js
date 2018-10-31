@@ -21,13 +21,11 @@ exports.create = (req, res) => {
             admin: (req.body.admin === 'on')
         }
     );
-
-    user.save((err, next) => {
+    user.save((err) => {
         if(err) {
-            console.log(err);
+            return res.status(500).send(err);
         } else {
-            res.send('User was created successfully');
+            return res.status(200).send(user);
         }
     });
-
 };

@@ -7,6 +7,6 @@ const UserSchema = mongoose.Schema({
     email: {type: String, required: false, max: 100},
     age: {type: Number, required: false},
     admin: {type: Boolean, required: true}
-}, {collection: 'Users'});
+}, {collection: 'users'});
 
 module.exports = mongoose.model("Users", UserSchema);

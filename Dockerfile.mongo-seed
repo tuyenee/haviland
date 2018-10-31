@@ -1,16 +1,3 @@
-#Dockerfile for mongo-seed
-
 FROM mongo
 
-COPY ./mongo-seed/initData /initData
-
-COPY ./wait-for-it.sh /usr/src/
-COPY ./mongo-seed/start.sh /usr/src
-RUN chmod +x /usr/src/wait-for-it.sh
-RUN chmod +x /usr/src/start.sh
-
-#CMD mongoimport --host mongo --port 27017 --db haviland --collection Users --type json --file /initData/users.json --jsonArray
-
-#CMD ./wait-for-it mongo:27017 -- mongoimport --host mongo --db haviland --collection Users --type json --file /initData/users.json --jsonArray
-
-CMD /usr/src/wait-for-it.sh mongo:27017 -t 30 -- /usr/src/start.sh
+COPY ./mongo-seed/start.js /docker-entrypoint-initdb.d

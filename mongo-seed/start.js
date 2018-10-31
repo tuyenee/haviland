@@ -1,6 +1,7 @@
-[
+db.haviland.drop();
+db.users.insertMany([
     {
-        "name": "Joe Smith",
+        "name": "Joe Doe",
         "username": "jsmith",
         "password": "test",
         "email": "jsmith@gmail.com",
@@ -8,11 +9,11 @@
         "admin": true
     },
     {
-        "name": "Jen Ford",
+        "name": "Jen Deer",
         "username": "jford",
         "password": "test",
         "email": "jford@gmail.com",
         "age": 45,
         "admin": false
     }
-]
+]);
