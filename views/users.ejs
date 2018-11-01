@@ -21,7 +21,7 @@
                             id="inlineFormInputGroup" 
                             placeholder="Username | Name" 
                             name="search" 
-                            value="<%= typeof search === 'string' ? search : '' %>"
+                            value="<%- typeof search === 'string' ? search : '' %>"
                         />
                     </div>
                 </div>
@@ -68,7 +68,8 @@
     </tbody>
 </table>
 <% } else { %>
-<strong>No user was found</strong>
+<hr/>
+No user was found
 <% } %>
 
 
