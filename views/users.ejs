@@ -1,13 +1,43 @@
-<h1>Users</h1>
+
+<h1><a href="/users" class="text-dark">Users</a></h1>
+
 
 <%- include('partial/flash-messages', {messages: getMessages()}) %>
-<button type="button" class="btn btn-primary mt-3 mb-3" data-toggle="modal" data-target="#newUserModal">
-    Create new user
-</button>
+<div class="row">
+    <div class="col-md-4 col-lg-2">
+        <button type="button" class="btn btn-primary mt-3 mb-3" data-toggle="modal" data-target="#newUserModal">Create new user</button>
+    </div>
+    <div class="col-md-8 col-lg-10 mt-3">
+        <form action="/users/search" method="POST" class="form-inline">
+            <div class="form-row">
+                <div class="col-auto">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                        <div class="input-group-text">Find user:</div>
+                        </div>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="inlineFormInputGroup" 
+                            placeholder="Username | Name" 
+                            name="search" 
+                            value="<%= typeof search === 'string' ? search : '' %>"
+                        />
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary mb-2">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <!-- User listing -->
+<% if(users.length) {%>
 <table class="table">
     <thead>
         <tr>
+            <th>Username</th>
             <th>Name</th>
             <th>Email</th>
             <th>Age</th>
@@ -18,10 +48,17 @@
     <tbody>
         <% users.forEach((user) => {%>
             <tr id="<%=user.id%>">
+                <td><%=user.username%></td>
                 <td><%=user.name%></td>
                 <td><%=user.email%></td>
                 <td><%=user.age%></td>
-                <td><%=user.admin%></td>
+                <td>
+                    <% if(user.admin) {%>
+                        <input type="checkbox" class="form-check-input ml-0" checked disabled/>
+                    <% } else { %>
+                        <input type="checkbox" class="form-check-input ml-0" disabled/>
+                    <% } %>
+                </td>
                 <td>
                     <a href="/users/<%=user.id%>">Edit</a> |
                     <a href="/users/delete/<%=user.id%>" class="delete-user" data-toggle="modal" data-target="#deleteUserModal">Delete</a>
@@ -30,6 +67,10 @@
         <%})%>
     </tbody>
 </table>
+<% } else { %>
+<strong>No user was found</strong>
+<% } %>
+
 
 <!-- TODO: check permission -->
 <!-- delete user modal -->

@@ -9,6 +9,7 @@ exports.index = (req, res) => {
         }
     });
 };
+
 exports.create = (req, res) => {
     let user = new User(
         {
@@ -29,10 +30,9 @@ exports.create = (req, res) => {
         }
     });
 };
+
 exports.delete = (req, res) => {
-    console.log('Attempting to delete user id=', req.param('id'));
-    
-    User.findByIdAndRemove(req.param('id'), err => {
+    User.findByIdAndRemove(req.body.id, err => {
         if(err) {
             req.flash('error', 'Failed to delete user. Please contact admin');
             return res.redirect('/users');
@@ -41,11 +41,13 @@ exports.delete = (req, res) => {
         return res.redirect('/users');
     });
 };
+
 exports.update = (req, res) => {
     res.status(200).send('Update user data');
 };
+
 exports.view = (req, res) => {
-    User.findById(req.param('id'), (err, user) => {
+    User.findById(req.params.id, (err, user) => {
         if(err) {
             req.flash('danger', 'User not found');
             return res.redirect('/users');
@@ -53,9 +55,10 @@ exports.view = (req, res) => {
         return res.render('user-view', {user});
     });
 };
+
 exports.edit = (req, res) => {
     const userData = {...req.body, admin: req.body.admin === "on"}
-    User.findByIdAndUpdate(req.param('id'), userData, {new: true}, (err, user) => {
+    User.findByIdAndUpdate(req.params.id, userData, {new: true}, (err, user) => {
         if(err) {
             req.flash('danger', 'Could not edit user. Please contact admin');
             res.render('user-view', {user});
@@ -64,5 +67,13 @@ exports.edit = (req, res) => {
             req.flash('success', 'Changes were successfully saved.');
             res.render('user-view', {user:req.body});
         }
+    });
+};
+
+exports.search = (req, res) => {
+    const searchRegex = new RegExp(req.body.search, 'i');
+    User.find({$or: [{username: searchRegex}, {name: searchRegex}]}, (err, users) => {
+        if(err) return res.send(err);
+        return res.render('users', {users: users, search: req.body.search});
     });
 }
