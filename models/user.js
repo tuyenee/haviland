@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const UserSchema = mongoose.Schema({
+let UserSchema = mongoose.Schema({
     name: {type: String, required: true, max: 100},
     username: {type: String, required: true, max: 50},
     password: {type: String, required: true, max: 100},
@@ -8,5 +8,9 @@ const UserSchema = mongoose.Schema({
     age: {type: Number, required: false},
     admin: {type: Boolean, required: true}
 }, {collection: 'users'});
+
+UserSchema.methods.validPassword = function (password) {
+    return password === this.password;
+};
 
 module.exports = mongoose.model("Users", UserSchema);
