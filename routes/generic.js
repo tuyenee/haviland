@@ -1,11 +1,15 @@
 module.exports = function(app) {
     app.route('/about')
         .get((req, res) => {
-            res.render('about');
+            res.render('about', {
+                currentUser: req.user
+            });
         });
     app.route('/rooms')
         .get((req, res) => {
-            res.render('rooms');
+            res.render('rooms',  {
+                currentUser: req.user
+            });
         });
     app.route('/login')
         .get((req, res) => {
@@ -15,4 +19,9 @@ module.exports = function(app) {
             res.render('index', {currentUser: req.user});
         }
     );
+    app.get('/logout', (req, res) => {
+        req.logout();
+        req.flash('success', 'User logged out');
+        res.redirect('/');
+    });
 }

@@ -5,7 +5,7 @@ exports.index = (req, res) => {
         if(err) {
             return console.error(err);
         } else {
-            res.render('users', {users:users});
+            res.render('users', {users:users, currentUser: req.user});
         }
     });
 };
@@ -42,17 +42,13 @@ exports.delete = (req, res) => {
     });
 };
 
-exports.update = (req, res) => {
-    res.status(200).send('Update user data');
-};
-
 exports.view = (req, res) => {
     User.findById(req.params.id, (err, user) => {
         if(err) {
             req.flash('danger', 'User not found');
             return res.redirect('/users');
         }
-        return res.render('user-view', {user});
+        return res.render('user-view', {user: user, currentUser: req.user});
     });
 };
 
@@ -61,11 +57,11 @@ exports.edit = (req, res) => {
     User.findByIdAndUpdate(req.params.id, userData, {new: true}, (err, user) => {
         if(err) {
             req.flash('danger', 'Could not edit user. Please contact admin');
-            res.render('user-view', {user});
+            res.render('user-view', {user: user, currentUser: req.user});
         }
         else {
             req.flash('success', 'Changes were successfully saved.');
-            res.render('user-view', {user:req.body});
+            res.render('user-view', {user:req.body, currentUser: req.user});
         }
     });
 };
@@ -74,6 +70,10 @@ exports.search = (req, res) => {
     const searchRegex = new RegExp(req.body.search, 'i');
     User.find({$or: [{username: searchRegex}, {name: searchRegex}]}, (err, users) => {
         if(err) return res.send(err);
-        return res.render('users', {users: users, search: req.body.search});
+        return res.render('users', {users: users, search: req.body.search, currentUser: req.user});
     });
+};
+
+exports.update = (req, res) => {
+    res.send('Updating user');
 }

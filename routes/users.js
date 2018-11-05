@@ -7,7 +7,6 @@ const userController = require('../controllers/userController');
 router.post('/search', userController.search);
 router.get('/', userController.index);
 router.post('/', userController.create);
-router.put('/', userController.update);
 router.post('/delete', userController.delete);
 router.get('/:id', userController.view);
 router.post('/:id', userController.edit);
