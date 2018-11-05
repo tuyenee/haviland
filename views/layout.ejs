@@ -11,8 +11,8 @@
 	<body>
 		<div class="container-fluid">
 			<%- include('partial/header') %>
+			<%- include('partial/flash-messages', {messages: getMessages()}) %>
 		</div>
-
 
 		<div class="jumbotron">
 			<%- body %>

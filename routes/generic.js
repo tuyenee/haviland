@@ -11,4 +11,8 @@ module.exports = function(app) {
         .get((req, res) => {
             res.render('login');
         });
+    app.get('/', (req, res) => {
+            res.render('index', {currentUser: req.user});
+        }
+    );
 }

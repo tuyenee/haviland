@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const ejsLayouts = require('express-ejs-layouts');
 const flash = require('express-flash-messages');
 const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 
 app.listen(_PORT, () => console.log("Server is running on " + _PORT + ', will be mapped to 8087' ));
@@ -25,7 +26,8 @@ db.on('error', console.error.bind(console, 'Mongo connection error:'));
 
 /* session */
 app.use(session({
-    secret: 'session-secret'
+    secret: 'session-secret',
+    store: new MongoStore({mongooseConnection: db})
 }));
 
 /* Body Parser */
@@ -55,8 +57,3 @@ const genericRoute = require('./routes/generic');
 const usersRoute = require('./routes/users');
 genericRoute(app);
 app.use('/users', usersRoute);
-
-app.get('/', (req, res) => {
-        res.render('index');
-    }
-);

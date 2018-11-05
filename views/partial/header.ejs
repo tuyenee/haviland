@@ -19,9 +19,13 @@
             </li>
         </ul>
         <ul class="navbar-nav">
+            <% if(typeof currentUser != 'undefined') { %>
+                <li class="nav-item float-right"><%= currentUser.username %></li>
+            <% } else { %>
             <li class="nav-item float-right">
                 <a class="nav-link" href="/login">Login</a>
             </li>
+            <% } %>
         </ul>
     </div>
 </nav>
