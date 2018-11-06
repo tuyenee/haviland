@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const acl = require('../config/acl');
 
 let UserSchema = mongoose.Schema({
     name: {type: String, required: true, max: 100},
@@ -11,6 +12,15 @@ let UserSchema = mongoose.Schema({
 
 UserSchema.methods.validPassword = function (password) {
     return password === this.password;
+};
+
+UserSchema.methods.isAdmin = function() {
+    return this.admin;
+};
+
+UserSchema.methods.getRole = function() {
+    if(this.isAdmin()) return acl.ROLE_ADMIN;
+    return acl.ROLE_USER
 };
 
 module.exports = mongoose.model("Users", UserSchema);
