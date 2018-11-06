@@ -10,7 +10,6 @@ const ROLE_GUEST = 'guest';
  */
 const requireRole = function (role, grantAccessToOwnResource = undefined) {
     return function(req, res, next) {
-        // console.log('Checking access control for:', req.user.username,req.user.getRole(), role);
         if(typeof req.user === 'undefined') {
             req.flash('danger', 'You need to log in');
             res.redirect('/login');
@@ -18,7 +17,9 @@ const requireRole = function (role, grantAccessToOwnResource = undefined) {
             next();
         } else if(typeof grantAccessToOwnResource === 'function') {
             if(req.user.id === grantAccessToOwnResource(req)) next();
-            else res.send('You are not allowed to modify this resource');
+            else {
+                res.send('You are not allowed to modify this resource');
+            }
         } else {
             res.send(403);
         }

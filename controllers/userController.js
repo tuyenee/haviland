@@ -11,16 +11,17 @@ exports.index = (req, res) => {
 };
 
 exports.create = (req, res) => {
+    /* !! TODO: Prevent non-admin users set themself as admin !!*/
     let user = new User(
         {
             username: req.body.username,
-            password: req.body.password,
             name: req.body.name,
             email: req.body.email,
             age: req.body.age,
             admin: (req.body.admin === 'on')
         }
     );
+    user.setPassword(req.body.password);
     user.save((err) => {
         if(err) {
             return res.status(500).send(err);
@@ -52,17 +53,34 @@ exports.view = (req, res) => {
     });
 };
 
-exports.edit = (req, res) => {
-    const userData = {...req.body, admin: req.body.admin === "on"}
-    User.findByIdAndUpdate(req.params.id, userData, {new: true}, (err, user) => {
+exports.edit = (req, res) => {  
+    let user = User.findById(req.params.id, (err, user) => {
         if(err) {
-            req.flash('danger', 'Could not edit user. Please contact admin');
-            res.render('user-view', {user: user, currentUser: req.user});
+            req.flash('danger', 'Could not save data');
+            return res.redirect('/users/' + req.params.id);
         }
-        else {
-            req.flash('success', 'Changes were successfully saved.');
-            res.render('user-view', {user:req.body, currentUser: req.user});
+        if(req.body.password.length > 0) {
+            // User wanted to change password
+            user.setPassword(req.body.password);
+            // This way we will also change the *salt*
+        } 
+        /* Populate new data (white list) */
+        user.name = req.body.name;
+        user.email = req.body.email;
+        user.age = req.body.age;
+        // Only admin can change extra info
+        if(req.user.isAdmin()) {
+            user.username = req.body.username
+            user.admin = req.body.admin === 'on';
         }
+        user.save((err) => {
+            if(err) {
+                return res.status(500).send(err);
+            } else {
+                req.flash('success', 'User data updated successfully.');
+                res.render('user-view', {user:user, currentUser: req.user});
+            }
+        });
     });
 };
 
