@@ -1,3 +1,71 @@
-A list of room will be showed here. 
+<h1><a href="/rooms" class="text-dark">Rooms</a></h1>
 
-Allow users to search for rooms by address (Dropdown select box)
+<%- include('partial/flash-messages', {messages: getMessages()}) %>
+
+<div class="row">
+    <div class="col-md-4 col-lg-2">
+        <button type="button" class="btn btn-primary mt-3 mb-3" data-toggle="modal" data-target="#newUserModal">Create new room</button>
+    </div>
+    <div class="col-md-8 col-lg-10 mt-3">
+        <form action="/rooms/search" method="POST" class="form-inline">
+            <div class="form-row">
+                <div class="col-auto">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                        <div class="input-group-text">Find rooms:</div>
+                        </div>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="inlineFormInputGroup" 
+                            placeholder="Address" 
+                            name="search" 
+                            value="<%- typeof search === 'string' ? search : '' %>"
+                        />
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary mb-2">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- User listing -->
+<% if(rooms.length) {%>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Building</th>
+                <th>Address</th>
+                <th>Room number</th>
+                <th>Occupant</th>
+                <th>Price vnd/month</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% rooms.forEach((room) => {%>
+                <tr id="<%=room.id%>">
+                    <td><%=room.building%></td>
+                    <td><%=room.address%></td>
+                    <td><%=room.number%></td>
+                    <td><%=room.occupant%></td>
+                    <td><%=room.price%></td>
+                    <td>
+                        <% if(typeof currentUser != 'undefined' && currentUser.isAdmin()) { %>
+                            <a href="/rooms/<%=room.id%>">Edit</a> |
+                            <a href="/rooms/delete/<%=room.id%>" class="delete-room" data-toggle="modal" data-target="#deleteRoomModal">Delete</a>
+                        <% } else { %>
+                            <a href="" class="btn btn-primary">Reserve now!</a>
+                        <% } %>
+                    </td>
+                </tr>
+            <%})%>
+        </tbody>
+    </table>
+<% } else { %>
+<hr/>
+No user was found
+<% } %>

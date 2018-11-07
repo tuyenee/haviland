@@ -5,12 +5,6 @@ module.exports = function(app) {
                 currentUser: req.user
             });
         });
-    app.route('/rooms')
-        .get((req, res) => {
-            res.render('rooms',  {
-                currentUser: req.user
-            });
-        });
     app.route('/login')
         .get((req, res) => {
             res.render('login');

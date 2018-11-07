@@ -55,5 +55,7 @@ myPassport(app, passport);
 /* Routing */
 const genericRoute = require('./routes/generic');
 const usersRoute = require('./routes/users');
+const roomsRoute = require('./routes/rooms');
 genericRoute(app);
 app.use('/users', usersRoute);
+app.use('/rooms', roomsRoute);
