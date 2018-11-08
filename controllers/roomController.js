@@ -1,4 +1,5 @@
 const Room = require('../models/room');
+const User = require('../models/user');
 
 exports.index = (req, res) => {
     Room.find((err, rooms) => {
@@ -11,7 +12,11 @@ exports.index = (req, res) => {
 };
 
 exports.search = (req, res) => {
-    res.send('Search for room');
+    const searchRegex = new RegExp(req.body.search, 'i');
+    Room.find({address: searchRegex}, (err, rooms) => {
+        if(err) return res.send(err);
+        return res.render('rooms', {rooms: rooms, search: req.body.search, currentUser: req.user});
+    });
 };
 
 exports.create = (req, res) => {
@@ -35,3 +40,109 @@ exports.view = (req, res) => {
 exports.edit = (req, res) => {
     res.send('Edit a room');
 };
+
+exports.reserve = (req, res) => {
+    if(typeof req.user === 'undefined') res.send(403);
+    else {
+        const roomId = req.body.id;
+        console.log('Reserving room:', roomId);
+        let room = Room.findById(roomId, (err, room) => {
+            res.setHeader('Content-Type', 'application/json');
+            if(err) {
+                res.send(JSON.stringify({ result: {message:'Error. Please try again'} }));
+            }
+            req.user.reserveRoom(room.id);
+            room.saveNewReservation(req.user);
+            res.send(JSON.stringify({
+                result: {
+                    message: 'Success',
+                    room: room
+                }
+            }));
+        });
+    }
+};
+
+exports.release = (req, res) => {
+    const roomId = req.body.roomId;
+    Room.findByIdAndUpdate(roomId, {$set: {occupant: undefined}}, {new: false}, (err, room) => {
+        if(err) {
+            res.send(err);
+        } else {
+            room.update()
+            User.updateOne({_id: room.occupant}, {room: undefined}, (err, raw) => {
+                if(err) {
+                    console.log('Error while updating user state');
+                } else {
+                    res.send('Released successfully');
+                }
+            })
+        }
+    })
+}
+
+exports.processReservation = (req, res) => {
+    // res.send('Processing your request ' + req.body.roomId + req.body.userId + req.body.action);
+    const roomId = req.body.roomId;
+    const userId = req.body.userId;
+    const action = req.body.action;
+
+    switch(action) {
+        // TODO: action names should not be hard coded. Define constants!
+        case 'reject':
+            // BIG TODO: Rewrite ugly nested callbacks to chaining promises
+            //TODO: get the room, get reservation, loop thru, find reservations with userId, pop it out, save reservation, respond
+            let room = Room.findById(roomId, (err, room) => {
+                if(err) {
+                    // TODO: error handling
+                    res.send('Error. Please try again');
+                }
+                console.log('Room reservation: ', room.reservation);
+                room.reservation = room.reservation.filter(function(value, index, array) {
+                    console.log('filtering by userId', userId);
+                    value.userId != userId;
+                });
+                console.log('Room reservation after filter:', room.reservation);
+                room.save((err, saved) => {
+                    if(err) {
+                        // TODO: Error handling
+                        console.log('Error while updating room reservation', err);
+                        res.send('Error. Please try again');
+                    }
+                    User.update({_id: userId}, {$unset: {reserving: 1 }}, (err) => {
+                        if(err) {
+                            console.log('Error while updating user state')
+                        } else                
+                            // TODO: proper respond
+                            res.send('Reservation processed succesfully');
+                    });
+                });
+            });
+            break;
+        case 'accept':
+            // SCRIPT: update the room byId, set the occupant field, update the user: unset reserving & set room
+            Room.updateOne({_id: roomId}, {
+                $unset: {reservation: 1},
+                occupant: userId
+            }, (err) => {
+                if(err) {
+                    console.log('Error when trying to update room state');
+                    res.send('Error. Please try again');
+                }
+            }).then(() => {
+                console.log('Updating user state', userId, roomId);
+                User.updateOne({_id: userId}, {
+                    reserving: undefined,
+                    room: roomId
+                }, (err, raw) => {
+                    if(err) {
+                        console.log('Error when updating user state', err);
+                        
+                    }
+                    console.log('Mongo response:', raw);
+                    res.send('Processed successfully!');
+                })
+            });
+            break;
+    }
+}

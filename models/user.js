@@ -8,8 +8,11 @@ let UserSchema = mongoose.Schema({
     username: {type: String, required: true, max: 50},
     password: {type: String, required: false, max: 100},
     salt: {type: String, required: false, max: 10},
+    phone: {type: String, required: false, max: 20},
     email: {type: String, required: false, max: 100},
     age: {type: Number, required: false},
+    reserving: {type: String, required: false},
+    room: {type: String, required: false},
     admin: {type: Boolean, required: true}
 }, {collection: 'users'});
 
@@ -41,5 +44,11 @@ UserSchema.methods.getRole = function() {
     if(this.isAdmin()) return acl.ROLE_ADMIN;
     return acl.ROLE_USER
 };
+
+UserSchema.methods.reserveRoom = function(roomId) {
+    this.reserving = roomId;
+    console.log('Saving user reservation', this.username, roomId);
+    return this.save();
+}
 
 module.exports = mongoose.model("Users", UserSchema);
