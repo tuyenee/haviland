@@ -20,7 +20,15 @@ exports.search = (req, res) => {
 };
 
 exports.create = (req, res) => {
-    res.send('Create room');
+    Room.create(req.body, (err, room) => {
+        if(err) {
+            req.flash('danger', 'Could not create room. Please try again');
+            res.redirect('/rooms');
+        } else {
+            req.flash('success', `Room ${room.number}/${room.building} - ${room.address} (${room.price}) was created successfully.`);
+            res.redirect('/rooms');
+        }
+    })
 };
 
 exports.delete = (req, res) => {
