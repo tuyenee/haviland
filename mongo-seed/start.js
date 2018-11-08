@@ -28,7 +28,6 @@ db.rooms.insertMany([
         "building": "DTH",
         "address": "65/5 Dinh Tien Hoang, Hai Chau, Da Nang",
         "number": 201,
-        "occupant": "",
         "price": 2800000
     },
     {
@@ -42,7 +41,6 @@ db.rooms.insertMany([
         "building": "DTH",
         "address": "65/5 Dinh Tien Hoang, Hai Chau, Da Nang",
         "number": 101,
-        "occupant": "",
         "price": 4800000
     },
 ]);
