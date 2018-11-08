@@ -4,10 +4,17 @@
 
 <div class="row">
     <% if(typeof currentUser != 'undefined' && currentUser.isAdmin()) { %>
-    <div class="col-md-4 col-lg-2">
-        <button type="button" class="btn btn-primary mt-3 mb-3" data-toggle="modal" data-target="#createRoomModal">Create new room</button>
-    </div>
-    <%-include('partial/create-room-modal')%>
+        <div class="col-md-4 col-lg-2">
+            <button type="button" class="btn btn-primary mt-3 mb-3" data-toggle="modal" data-target="#createRoomModal">Create new room</button>
+        </div>
+        <%-include('partial/manage-room-modal')%>
+        <script>
+            function confirmDeletion(roomId) {
+                $('#deleteRoomModal input#roomId').val(roomId);
+                $('#deleteRoomModal').modal('show');
+                return false;
+            }
+        </script>
     <% } %>
     <div class="col-md-8 col-lg-10 mt-3">
         <form action="/rooms/search" method="POST" class="form-inline">
@@ -27,6 +34,21 @@
                         />
                     </div>
                 </div>
+                <div class="col-auto">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                            <div class="input-group-text">Price up to:</div>
+                            </div>
+                            <input 
+                                type="number" 
+                                class="form-control" 
+                                id="filter-price" 
+                                placeholder="Max price" 
+                                name="maxPrice" 
+                                value="<%- typeof maxPrice === 'string' ? maxPrice : '' %>"
+                            />
+                        </div>
+                    </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-primary mb-2">Search</button>
                 </div>
@@ -82,7 +104,7 @@
                     <td>
                         <% if(typeof currentUser != 'undefined' && currentUser.isAdmin()) { %>
                             <a href="/rooms/<%=room.id%>">View</a> |
-                            <a href="/rooms/delete/<%=room.id%>" class="delete-room" data-toggle="modal" data-target="#deleteRoomModal">Delete</a>
+                            <a href="#" onclick="confirmDeletion('<%=room.id%>')">Delete</a>
                         <% } else if(!room.occupant) { %>
                             <% if(typeof currentUser != 'undefined') { %>
                                 <% if(typeof currentUser.reserving != 'undefined' && currentUser.reserving === room.id) { %>

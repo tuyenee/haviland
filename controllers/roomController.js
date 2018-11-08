@@ -13,7 +13,13 @@ exports.index = (req, res) => {
 
 exports.search = (req, res) => {
     const searchRegex = new RegExp(req.body.search, 'i');
-    Room.find({address: searchRegex}, (err, rooms) => {
+    const maxPrice = req.body.maxPrice;
+    Room.find({
+        address: searchRegex
+        // , $where: function() {
+        //     return obj.price <= maxPrice;
+        // }
+    }, (err, rooms) => {
         if(err) return res.send(err);
         return res.render('rooms', {rooms: rooms, search: req.body.search, currentUser: req.user});
     });
@@ -32,7 +38,16 @@ exports.create = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-    res.send('Delete room');
+    // Script: method post, req.body.roomId => roomId
+    Room.deleteOne({_id: req.body.roomId}, (err) => {
+        if(err) {
+            req.flash('danger', 'Could not delete room. Please try again');
+            res.redirect('/rooms');
+        } else {
+            req.flash('success', 'Room was deleted successfully');
+            res.redirect('/rooms');
+        }
+    });
 };
 
 exports.view = (req, res) => {
