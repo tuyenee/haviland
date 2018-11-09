@@ -6,7 +6,7 @@ let RoomSchema = mongoose.Schema({
     address: {type: String, required: true, max: 100},
     number: {type: Number, required: true, max: 100000},
     occupant: {type: String, required: false},
-    price: {type: Number, required: true, max: 10000000},
+    price: {type: Object, required: true, max: 10000000},
     reservation: {type: Array, required: false}
 }, {collection: 'rooms'});
 

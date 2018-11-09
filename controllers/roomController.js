@@ -14,13 +14,17 @@ exports.index = (req, res) => {
 exports.search = (req, res) => {
     const searchRegex = new RegExp(req.body.search, 'i');
     const maxPrice = req.body.maxPrice;
+    console.log('---loging user input: ', typeof maxPrice);
+    console.log(maxPrice);
+    console.log(maxPrice.test);
     Room.find({
-        address: searchRegex
-        // , $where: function() {
-        //     return obj.price <= maxPrice;
-        // }
+        address: searchRegex, 
+        $where: "this.price <= " + maxPrice
     }, (err, rooms) => {
-        if(err) return res.send(err);
+        if(err) {
+            console.log('Error from Mongo:', err);
+            return res.send(err);
+        }
         return res.render('rooms', {rooms: rooms, search: req.body.search, currentUser: req.user});
     });
 };
