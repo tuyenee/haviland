@@ -44,13 +44,16 @@ exports.delete = (req, res) => {
 };
 
 exports.view = (req, res) => {
-    User.findById(req.params.id, (err, user) => {
-        if(err) {
-            req.flash('danger', 'User not found');
-            return res.redirect('/users');
-        }
-        return res.render('user-view', {user: user, currentUser: req.user});
-    });
+    User.findById(req.params.id)
+        .populate('room')
+        .exec(function(err, user) {
+            if(err) {
+                console.log('ERROR---', err);
+                req.flash('danger', 'User not found');
+                return res.redirect('/users');
+            }
+            return res.render('user-view', {user: user, currentUser: req.user});
+        })
 };
 
 exports.edit = (req, res) => {  

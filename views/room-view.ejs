@@ -24,7 +24,7 @@
     <hr/>
     <div class="form-group">
         <label>Occupancy:</label>
-        <a href="/users/<%= room.occupant %>" class="badge badge-primary ml-4">User: <%= room.occupant %></a><br/>
+        <a href="/users/<%= room.occupant.id %>" class="badge badge-primary ml-4">User: <%= room.occupant.name %> / <%= room.occupant.username %></a><br/>
         <button class="btn btn-danger mt-2" onclick="releaseRoom('<%=room.id%>')">Release room</button>
     </div>
 <% } %>

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const acl = require('../config/acl');
 const crypto = require('crypto');
+const Room = require('./room');
 const SALT_LENGTH = 10;
 
 let UserSchema = mongoose.Schema({
@@ -12,7 +13,7 @@ let UserSchema = mongoose.Schema({
     email: {type: String, required: false, max: 100},
     age: {type: Number, required: false},
     reserving: {type: String, required: false},
-    room: {type: String, required: false},
+    room: {type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: false},
     admin: {type: Boolean, required: true}
 }, {collection: 'users'});
 
@@ -51,4 +52,4 @@ UserSchema.methods.reserveRoom = function(roomId) {
     return this.save();
 }
 
-module.exports = mongoose.model("Users", UserSchema);
+module.exports = mongoose.model("User", UserSchema);

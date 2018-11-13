@@ -9,6 +9,7 @@ db.users.insertMany([
         "phone": "01252517108",
         "email": "jsmith@gmail.com",
         "age": 40,
+        "room": (new ObjectId("5beaa2b064c5fe74a27df04c")),
         "admin": true
     },
     {
@@ -25,6 +26,7 @@ db.users.insertMany([
 ]);
 db.rooms.insertMany([
     {
+        "_id": (new ObjectId("5beaa2b064c5fe74a27df04b")),
         "building": "DTH",
         "address": "65/5 Dinh Tien Hoang, Hai Chau, Da Nang",
         "number": 201,
@@ -32,14 +34,16 @@ db.rooms.insertMany([
         "secret": "rTt8kC"
     },
     {
+        "_id": (new ObjectId("5beaa2b064c5fe74a27df04c")),
         "building": "DTH",
         "address": "65/5 Dinh Tien Hoang, Hai Chau, Da Nang",
         "number": 202,
-        "occupant": "5be2570e76e440ab73cd81a6",
+        "occupant": (new ObjectId("5be2570e76e440ab73cd81a6")),
         "price": 3000000,
         "secret": "ueM2RZ"
     },
     {
+        "_id": (new ObjectId("5beaa2b064c5fe74a27df04d")),
         "building": "DTH",
         "address": "65/5 Dinh Tien Hoang, Hai Chau, Da Nang",
         "number": 101,

@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 const acl = require('../config/acl');
+const User = require('./user');
 
 let RoomSchema = mongoose.Schema({
     building: {type: String, required: true, max: 24},
     address: {type: String, required: true, max: 100},
     number: {type: Number, required: true, max: 100000},
-    occupant: {type: String, required: false},
+    occupant: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false},
     price: {type: Object, required: true, max: 10000000},
+    secret: {type: String, required: false},
     reservation: {type: Array, required: false}
 }, {collection: 'rooms'});
 
@@ -26,4 +28,4 @@ RoomSchema.methods.saveNewReservation = function(user) {
         }
     });
 }
-module.exports = mongoose.model("Rooms", RoomSchema);
+module.exports = mongoose.model("Room", RoomSchema);

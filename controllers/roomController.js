@@ -53,13 +53,16 @@ exports.delete = (req, res) => {
 };
 
 exports.view = (req, res) => {
-    Room.findById(req.params.id, (err, room) => {
-        if(err) {
-            req.flash('danger', 'Room not found');
-            return res.redirect('/rooms');
-        }
-        return res.render('room-view', {room: room, currentUser: req.user});
-    });
+    Room.findById(req.params.id)
+        .populate('occupant')
+        .exec(function(err, room) {
+            if(err) {
+                console.log('ERRORRR', err);
+                req.flash('danger', 'Some error happened');
+                return res.redirect('/rooms');
+            }
+            return res.render('room-view', {room: room, currentUser: req.user});
+        });
 };
 
 exports.edit = (req, res) => {
