@@ -14,9 +14,7 @@ exports.index = (req, res) => {
 exports.search = (req, res) => {
     const searchRegex = new RegExp(req.body.search, 'i');
     const maxPrice = req.body.maxPrice;
-    console.log('---loging user input: ', typeof maxPrice);
-    console.log(maxPrice);
-    console.log(maxPrice.test);
+    
     Room.find({
         address: searchRegex, 
         $where: "this.price <= " + maxPrice
@@ -25,7 +23,7 @@ exports.search = (req, res) => {
             console.log('Error from Mongo:', err);
             return res.send(err);
         }
-        return res.render('rooms', {rooms: rooms, search: req.body.search, currentUser: req.user});
+        return res.render('rooms', {rooms: rooms, search: req.body.search, maxPrice: req.body.maxPrice, currentUser: req.user});
     });
 };
 

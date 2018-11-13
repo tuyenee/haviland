@@ -28,19 +28,22 @@ db.rooms.insertMany([
         "building": "DTH",
         "address": "65/5 Dinh Tien Hoang, Hai Chau, Da Nang",
         "number": 201,
-        "price": 2800000
+        "price": 2800000,
+        "secret": "rTt8kC"
     },
     {
         "building": "DTH",
         "address": "65/5 Dinh Tien Hoang, Hai Chau, Da Nang",
         "number": 202,
         "occupant": "5be2570e76e440ab73cd81a6",
-        "price": 3000000
+        "price": 3000000,
+        "secret": "ueM2RZ"
     },
     {
         "building": "DTH",
         "address": "65/5 Dinh Tien Hoang, Hai Chau, Da Nang",
         "number": 101,
-        "price": 4800000
+        "price": 4800000,
+        "secret": "AfyT5s"
     },
 ]);

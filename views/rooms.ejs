@@ -1,6 +1,7 @@
 <h1><a href="/rooms" class="text-dark">Rooms</a></h1>
 
 <%- include('partial/flash-messages', {messages: getMessages()}) %>
+<div id="friend-recommend-room-message"></div>
 
 <div class="row">
     <% if(typeof currentUser != 'undefined' && currentUser.isAdmin()) { %>
@@ -35,20 +36,20 @@
                     </div>
                 </div>
                 <div class="col-auto">
-                        <div class="input-group mb-2">
-                            <div class="input-group-prepend">
-                            <div class="input-group-text">Price up to:</div>
-                            </div>
-                            <input 
-                                type="text" 
-                                class="form-control" 
-                                id="filter-price" 
-                                placeholder="Max price" 
-                                name="maxPrice" 
-                                value="<%- typeof maxPrice === 'string' ? maxPrice : '' %>"
-                            />
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                        <div class="input-group-text">Price up to:</div>
                         </div>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="filter-price" 
+                            placeholder="Max price" 
+                            name="maxPrice" 
+                            value="<%- typeof maxPrice === 'string' ? maxPrice : '' %>"
+                        />
                     </div>
+                </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-primary mb-2">Search</button>
                 </div>
@@ -72,10 +73,10 @@
         </thead>
         <tbody>
             <% rooms.forEach((room) => {%>
-                <tr id="<%=room.id%>">
+                <tr id="<%=room.id%>" class="room-info">
                     <td><%=room.building%></td>
                     <td><%=room.address%></td>
-                    <td>
+                    <td class="room-number">
                         <% if(typeof currentUser != 'undefined' && currentUser.isAdmin()) { %>
                             <a class="btn">
                                 <%=room.number%>
@@ -114,9 +115,21 @@
                                         class="btn btn-primary" 
                                         onclick="reserveRoom('<%=room.id%>')"
                                     >Reserve now!</button>
+                                    <button 
+                                        class="btn btn-primary" 
+                                        data-room="<%=room.number%>" 
+                                        data-building="<%=room.building%>" 
+                                        onclick="share(this.dataset)"
+                                    >Share</button>
                                 <% } %>
                             <% } else { %>
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#loginModal">Login & Reserve now!</button>
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#loginModal">Login & Reserve!</button>
+                                <button 
+                                    class="btn btn-primary" 
+                                    data-building="<%=room.building%>" 
+                                    data-room="<%=room.number%>" 
+                                    onclick="share(this.dataset)"
+                                >Share</button>
                             <% } %>
                         <% } %>
                     </td>
@@ -145,7 +158,33 @@ No room was found
         </div>
     </div>
 </div>
-
+<div class="modal" id="shareModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    Share with your friends
+                </h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="share-room-number"/>
+                <input type="hidden" id="share-room-building"/>
+                <div class="form-group">
+                    <label for="share-message">Your message:</label>
+                    <input type="text" id="share-message" class="form-control" value="Please checkout this room and tell me what you think."/>
+                </div>
+                <hr/>
+                <div class="form-group">
+                    <label for="share-url">Share this link below to your friends so that they can check out the room too!</label>
+                    <textarea type="text" id="share-url" class="form-control" rows=3></textarea>
+                </div>
+                <button class="btn btn-primary mt-3" data-dismiss="modal">
+                    OK. I'll do it right now!
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     function reserveRoom(id) {
         $.ajax({
@@ -166,5 +205,22 @@ No room was found
             }
         })
     }
+    function share(dataset) {
+        var message = $('#share-message').val();
+        $('#share-room-number').val(dataset.room);
+        $('#share-room-building').val(dataset.building);
+        $('#shareModal #share-url').val(location.host + location.pathname + `#${dataset.room}&${dataset.building}&${message}`);
+        $('#shareModal').modal('show');
+        $('#shareModal #share-url').focus(function(){$(this).select()});
+    };
+    $(document).ready(function() {
+        if(this.location.hash) {
+            roomData = decodeURI(this.location.hash).substring(1).split('&');
+            $('#friend-recommend-room-message')
+                .html('<div class="alert alert-primary" role="alert">Your friend recommends you to check out room <b>' + roomData[0] + '</b> at the <b>' + roomData[1] + '</b> building!<br/>Message: <b>' + roomData[2] + '</b></div>');
+        }
+        $('input#share-message').on('keyup', function() {
+            $('#share-url').val(location.href + `#${$('#share-room-number').val()}&${$('#share-room-building').val()}&${$('#share-message').val()}`)
+        })
+    });
 </script>
-    
