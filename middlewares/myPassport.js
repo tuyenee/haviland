@@ -8,7 +8,6 @@ module.exports = function(app, passport) {
     app.use(passport.session());
 
     passport.serializeUser((user, callback) => {
-        console.log('SERIALIZE USER will call the callback with', callback);
         callback(null, user.id)
     });
     passport.deserializeUser((id, callback) => {
@@ -17,7 +16,6 @@ module.exports = function(app, passport) {
 
     passport.use(new LocalStrategy(
         function(username, password, done) {
-            console.log(done);
             User.findOne({ username: username }, function (err, user) {
                 if (err) { 
                     return done(err); 
@@ -35,9 +33,7 @@ module.exports = function(app, passport) {
     
     /* If the flag SESSION_FIXATION_FIXED is ON, we will regenerate sessionId after login success */
     if(SESSION_FIXATION_FIXED) {
-        console.log('WE SHOULD FIX SESSION FIXATION');
         let sessionRegenerator = function(req, res) {
-            console.log('SESSION REGENERATOR WAS CALLED');
             const temp = req.session.passport;
             req.session.regenerate(function(err) {
                 req.session.passport = temp;
