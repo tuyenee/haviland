@@ -1,16 +1,23 @@
 let LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/user');
+const SESSION_FIXATION_FIXED = process.env.SESSION_FIXATION_FIXED;
 
 module.exports = function(app, passport) {
 
     app.use(passport.initialize());
     app.use(passport.session());
 
-    passport.serializeUser((user, callback) => callback(null, user.id));
-    passport.deserializeUser((id, callback) => User.findById(id, (err, user) => callback(err, user)));
+    passport.serializeUser((user, callback) => {
+        console.log('SERIALIZE USER will call the callback with', callback);
+        callback(null, user.id)
+    });
+    passport.deserializeUser((id, callback) => {
+        User.findById(id, (err, user) => callback(err, user))
+    });
 
     passport.use(new LocalStrategy(
         function(username, password, done) {
+            console.log(done);
             User.findOne({ username: username }, function (err, user) {
                 if (err) { 
                     return done(err); 
@@ -25,12 +32,38 @@ module.exports = function(app, passport) {
             });
         }
     ));
-        
-    app.post('/login',
-        passport.authenticate('local', { 
-            successRedirect: '/',
-            failureRedirect: '/login',
-            failureFlash: true
-        })
-    );
+    
+    /* If the flag SESSION_FIXATION_FIXED is ON, we will regenerate sessionId after login success */
+    if(SESSION_FIXATION_FIXED) {
+        console.log('WE SHOULD FIX SESSION FIXATION');
+        let sessionRegenerator = function(req, res) {
+            console.log('SESSION REGENERATOR WAS CALLED');
+            const temp = req.session.passport;
+            req.session.regenerate(function(err) {
+                req.session.passport = temp;
+                req.session.save(function(err) {
+                    res.redirect('/');
+                })
+            })
+        };
+        app.post(
+            '/login',
+            passport.authenticate('local', {
+                // successRedirect: '/',
+                failureRedirect: '/login',
+                failureFlash: true,
+            }),
+            sessionRegenerator
+        );
+    } else {
+        /* WITHOUT REGENERATING SESSION AFTER LOGIN */
+        app.post(
+            '/login',
+            passport.authenticate('local', { 
+                successRedirect: '/',
+                failureRedirect: '/login',
+                failureFlash: true
+            })
+        );
+    }
 }
