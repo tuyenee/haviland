@@ -1,4 +1,8 @@
 # Haviland
+## Install
+1. Create the .env file
+You can Rename the existing .env-sample to .env && modify the default variables if needed.
+2. Then run `docker-compose up`
 ## Known vulnerabilities
 1. Session fixation
 2. CSRF everywhere
