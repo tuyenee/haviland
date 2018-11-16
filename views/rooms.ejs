@@ -74,9 +74,9 @@
         <tbody>
             <% rooms.forEach((room) => {%>
                 <tr id="<%=room.id%>" class="room-info">
-                    <td><%=room.building%></td>
-                    <td><%=room.address%></td>
-                    <td class="room-number">
+                    <td class="align-middle"><%=room.building%></td>
+                    <td class="align-middle"><%=room.address%></td>
+                    <td class="room-number align-middle">
                         <% if(typeof currentUser != 'undefined' && currentUser.isAdmin()) { %>
                             <a class="btn">
                                 <%=room.number%>
@@ -90,7 +90,7 @@
                             <%=room.number%>
                         <% } %>
                     </td>
-                    <td>
+                    <td class="align-middle">
                         <% if(room.occupant) { %>
                             <% if(typeof currentUser != 'undefined' && room.occupant === currentUser.id) { %>
                                 <span class="badge badge-success">Your room!</span>
@@ -101,8 +101,8 @@
                             <span class="badge badge-primary">Available</span>
                         <% } %>
                     </td>
-                    <td><%=room.price%></td>
-                    <td>
+                    <td class="align-middle"><%=room.price%></td>
+                    <td class="align-middle">
                         <% if(typeof currentUser != 'undefined' && currentUser.isAdmin()) { %>
                             <a href="/rooms/<%=room.id%>">View</a> |
                             <a href="#" onclick="confirmDeletion('<%=room.id%>')">Delete</a>
@@ -112,7 +112,7 @@
                                     <a href="#" class="btn btn-outline-primary">Awaiting for confirmation</a>
                                 <% } else if(!currentUser.reserving) { %>
                                     <button 
-                                        class="btn btn-primary" 
+                                        class="btn btn-primary mt-1 mb-1" 
                                         onclick="reserveRoom('<%=room.id%>')"
                                     >Reserve now!</button>
                                     <button 
@@ -123,7 +123,7 @@
                                     >Share</button>
                                 <% } %>
                             <% } else { %>
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#loginModal">Login & Reserve!</button>
+                                <button class="btn btn-primary mt-1 mb-1" data-toggle="modal" data-target="#loginModal">Login & Reserve!</button>
                                 <button 
                                     class="btn btn-primary" 
                                     data-building="<%=room.building%>" 
