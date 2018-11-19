@@ -21,7 +21,11 @@
                             id="inlineFormInputGroup" 
                             placeholder="Username | Name" 
                             name="search" 
-                            value="<%- typeof search === 'string' ? search : '' %>"
+                            <% if(process.env.REFLECTED_XSS_FIXED) { %>
+                                value="<%= typeof search === 'string' ? search : '' %>"
+                            <% } else { %>
+                                value=<%- typeof search === 'string' ? search : '' %>
+                            <% } %>
                         />
                     </div>
                 </div>

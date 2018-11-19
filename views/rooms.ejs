@@ -31,7 +31,11 @@
                             id="inlineFormInputGroup" 
                             placeholder="Address" 
                             name="search" 
-                            value="<%- typeof search === 'string' ? search : '' %>"
+                            <% if(process.env.REFLECTED_XSS_FIXED) { %>
+                                value="<%= typeof search === 'string' ? search : '' %>"
+                            <% } else { %>
+                                value=<%- typeof search === 'string' ? search : '' %>
+                            <% } %>
                         />
                     </div>
                 </div>
@@ -46,7 +50,11 @@
                             id="filter-price" 
                             placeholder="Max price" 
                             name="maxPrice" 
-                            value="<%- typeof maxPrice === 'string' ? maxPrice : '' %>"
+                            <% if(process.env.REFLECTED_XSS_FIXED) { %>
+                                value="<%= typeof maxPrice === 'string' ? maxPrice : '' %>"
+                            <% } else { %>
+                                value=<%- typeof maxPrice === 'string' ? maxPrice : '' %>
+                            <% } %>
                         />
                     </div>
                 </div>
