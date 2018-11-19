@@ -5,7 +5,7 @@ const router = express.Router();
 const roomController = require('../controllers/roomController');
 
 /* Rooms CRUD. */
-router.post('/search', roomController.search);
+router.get('/search', roomController.search);
 router.post('/reserve/', roomController.reserve);
 router.post('/process-reservation/', roomController.processReservation);
 router.post('/release', acl.requireRole('admin'), roomController.release);
