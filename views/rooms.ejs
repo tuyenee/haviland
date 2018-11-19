@@ -222,11 +222,29 @@ No room was found
         $('#shareModal #share-url').focus(function(){$(this).select()});
     };
     $(document).ready(function() {
-        if(this.location.hash) {
-            roomData = decodeURI(this.location.hash).substring(1).split('&');
-            $('#friend-recommend-room-message')
+        <% if(process.env.DOM_BASED_XSS_FIXED) {%>
+            <% console.log('SHOULD FIX DOM_BASED_XSS') %>
+            if(this.location.hash) {
+                roomData = decodeURI(this.location.hash).substring(1).split('&');
+                roomData = roomData.map(function(item) {
+                    return item
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;");
+                });
+                $('#friend-recommend-room-message')
                 .html('<div class="alert alert-primary" role="alert">Your friend recommends you to check out room <b>' + roomData[0] + '</b> at the <b>' + roomData[1] + '</b> building!<br/>Message: <b>' + roomData[2] + '</b></div>');
-        }
+            }
+        <% } else {%>
+            if(this.location.hash) {
+                roomData = decodeURI(this.location.hash).substring(1).split('&');
+                $('#friend-recommend-room-message')
+                .html('<div class="alert alert-primary" role="alert">Your friend recommends you to check out room <b>' + roomData[0] + '</b> at the <b>' + roomData[1] + '</b> building!<br/>Message: <b>' + roomData[2] + '</b></div>');
+            }
+        <% } %>
+
         $('input#share-message').on('keyup', function() {
             $('#share-url').val(location.href + `#${$('#share-room-number').val()}&${$('#share-room-building').val()}&${$('#share-message').val()}`)
         })
