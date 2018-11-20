@@ -16,6 +16,14 @@ exports.index = (req, res) => {
 };
 
 exports.search = (req, res) => {
+    // Extra strict input validation to protect against $where query code execution
+    if(process.env.MONGO_QUERY_FIXED) {
+        if(!req.query.maxPrice.match(/^[0-9]*$/)) {
+            req.flash('danger', 'Please put a natural number into the max price filter');
+            return res.redirect('/rooms');
+        }
+    } 
+
     const criteria = {};
     if(req.query.search) {
         const searchRegex = new RegExp(req.query.search, 'i');
