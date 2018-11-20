@@ -13,13 +13,13 @@ app.listen(_PORT, () => console.log("Server is running on " + _PORT + ', will be
 
 /* Mongo connection */
 const mongoDb = 'mongodb://mongo:27017';
-console.log('READ from the ENV:  ', process.env.MONGO_INITDB_DATABASE);
 mongoose.connect(mongoDb, {
     authSource: process.env.MONGO_INITDB_AUTH_DATABASE,
     auth: {user: process.env.MONGO_INITDB_ROOT_USERNAME, password: process.env.MONGO_INITDB_ROOT_PASSWORD},
     dbName: process.env.MONGO_INITDB_DATABASE,
     useNewUrlParser: true
 });
+mongoose.set('useFindAndModify', false);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Mongo connection error:'));
 

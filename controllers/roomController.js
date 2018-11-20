@@ -83,7 +83,21 @@ exports.view = (req, res) => {
 };
 
 exports.edit = (req, res) => {
-    res.send('Edit a room');
+    console.log('Updating room:', req.params.id);
+    console.log('Data: ', req.body);
+    Room.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        (err, room) => {
+            console.log('Updated room, return: ', err, room);
+            if(err) {
+                req.flash('danger', 'Error happened, please contact admin');
+                res.redirect('/rooms/' + req.params.id);
+            }
+            req.flash('success', 'Room was updated successfully')
+            res.redirect('/rooms/' + req.params.id);
+        }
+    )
 };
 
 exports.reserve = (req, res) => {
@@ -114,7 +128,7 @@ exports.release = (req, res) => {
         if(err) {
             res.send(err);
         } else {
-            room.update()
+            // room.update()
             User.updateOne({_id: room.occupant}, {room: undefined}, (err, raw) => {
                 if(err) {
                     console.log('Error while updating user state');
@@ -154,7 +168,7 @@ exports.processReservation = (req, res) => {
                         console.log('Error while updating room reservation', err);
                         res.send('Error. Please try again');
                     }
-                    User.update({_id: userId}, {$unset: {reserving: 1 }}, (err) => {
+                    User.updateOne({_id: userId}, {$unset: {reserving: 1 }}, (err) => {
                         if(err) {
                             console.log('Error while updating user state')
                         } else                
