@@ -2,6 +2,9 @@
 <%- include('partial/flash-messages', {messages: getMessages()}) %>
 <hr/>
 <form action="/users/<%= user.id %>" method="POST">
+    <% if(process.env.CSRF_FIXED) { %>
+        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    <% } %>
     <div class="form-group">
         <label for="username">Username</label>
         <input 

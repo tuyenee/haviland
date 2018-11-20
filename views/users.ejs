@@ -90,7 +90,7 @@ No user was found
                     Are you sure you want to delete user <span id="user-detail"></span>
                 </div>
                 <form action="/users/delete" method="POST">
-                    <input type="hidden" name="_method" value="DELETE"/>
+                    <input type="hidden" name="_csrf" value="<%=csrfToken%>"/>
                     <input type="hidden" id="user-id" name="id"/>
                     <button type="submit" class="btn btn-primary w-25 mr-3">Sure</button>
                     <button type="button" class="btn btn-danger w-25" data-dismiss="modal">Not very sure</button>
@@ -110,6 +110,7 @@ No user was found
             </div>
             <div class="modal-body">
                 <form method="POST" action="/users">
+                    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
                     <div class="form-group">
                         <label for="user">Username</label>
                         <input type="text" class="form-control" id="user" placeholder="Enter username" name="username" value="default">
@@ -143,19 +144,6 @@ No user was found
 </div>
 
 <script>
-    function confirmDelete(id) {
-        console.log('going to delete', id);
-        $.ajax({
-            url: '/users/' + id,
-            type: 'DELETE',
-            success: function(res) {
-                console.log('Delete success', res)
-            },
-            error: function(res) {
-                console.log('Delete user failed', res)
-            }
-        })
-    }
     $('a.delete-user').on("click", function() {
         var userRow = $(this).closest('tr');
         var userId = userRow.attr('id');
