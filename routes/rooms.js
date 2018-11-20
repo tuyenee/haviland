@@ -24,7 +24,7 @@ if(process.env.CSRF_FIXED) {
     router.get('/:id', roomController.view);
     router.get('/', roomController.index);
     router.post('/reserve/', roomController.reserve);
-    router.post('/process-reservation/', roomController.processReservation);
+    router.post('/process-reservation/', acl.requireRole('admin'), roomController.processReservation);
     router.post('/release', acl.requireRole('admin'), roomController.release);
     router.post('/', acl.requireRole('admin') , roomController.create);
     router.post('/delete', acl.requireRole('admin'), roomController.delete);
