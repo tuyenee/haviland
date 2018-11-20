@@ -2,6 +2,7 @@
 <%- include('partial/flash-messages', {messages: getMessages()}) %>
 <hr/>
 <form action="/rooms/<%= room.id %>" method="POST">
+    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
     <div class="form-group">
         <label for="username">Building</label>
         <input type="text" class="form-control" name="building" value="<%= room.building %>" />
@@ -52,7 +53,8 @@
                 data: {
                     roomId: "<%=room.id%>",
                     userId: fromUserId,
-                    action: action
+                    action: action,
+                    _csrf: "<%=csrfToken%>"
                 },
                 success: function(res) {
                     location.reload();

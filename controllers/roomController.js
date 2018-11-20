@@ -6,7 +6,11 @@ exports.index = (req, res) => {
         if(err) {
             return console.error(err);
         } else {
-            res.render('rooms', {rooms:rooms, currentUser: req.user});
+            res.render('rooms', {
+                rooms:rooms, 
+                currentUser: req.user, 
+                csrfToken: req.csrfToken()
+            });
         }
     });
 };
@@ -26,7 +30,13 @@ exports.search = (req, res) => {
             console.log('Error from Mongo:', err);
             return res.send(err);
         }
-        return res.render('rooms', {rooms: rooms, search: req.query.search, maxPrice: req.query.maxPrice, currentUser: req.user});
+        return res.render('rooms', {
+            rooms: rooms, 
+            search: req.query.search, 
+            maxPrice: req.query.maxPrice, 
+            currentUser: req.user,
+            csrfToken: req.csrfToken()
+        });
     });
 };
 
@@ -64,7 +74,11 @@ exports.view = (req, res) => {
                 req.flash('danger', 'Some error happened');
                 return res.redirect('/rooms');
             }
-            return res.render('room-view', {room: room, currentUser: req.user});
+            return res.render('room-view', {
+                room: room, 
+                currentUser: req.user, 
+                csrfToken: req.csrfToken()
+            });
         });
 };
 
