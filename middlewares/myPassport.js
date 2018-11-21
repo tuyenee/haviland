@@ -48,8 +48,14 @@ module.exports = function(app, passport) {
         };
         app.post(
             '/login',
+            /* Because Passport hard-coded the "Missing credentials" message - I want to override it by this midleware*/
+            (req, res, done) => {
+                if(!req.body.username || !req.body.password) {
+                    req.flash('danger', 'Missing credentials');
+                    res.redirect('/login')
+                } else done();
+            },
             passport.authenticate('local', {
-                // successRedirect: '/',
                 failureRedirect: '/login',
                 failureFlash: true,
             }),
