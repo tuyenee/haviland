@@ -1,6 +1,7 @@
 let LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/user');
 const SESSION_FIXATION_FIXED = process.env.SESSION_FIXATION_FIXED;
+const captcha = require('./myCaptcha');
 
 module.exports = function(app, passport) {
 
@@ -48,6 +49,7 @@ module.exports = function(app, passport) {
         };
         app.post(
             '/login',
+            captcha,
             passport.authenticate('local', {
                 // successRedirect: '/',
                 failureRedirect: '/login',
