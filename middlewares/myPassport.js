@@ -21,10 +21,14 @@ module.exports = function(app, passport) {
                     return done(err); 
                 }
                 if (!user) {
-                    return done(null, false, { message: 'Incorrect username.', type: 'danger' });
+                    return done(null, false, { 
+                        message: process.env.USERNAME_ENUMERATION_FIXED ? 'Incorect username or password.' : 'Incorrect username.', 
+                        type: 'danger' });
                 }
                 if (!user.validPassword(password)) {
-                    return done(null, false, { message: 'Incorrect password.' , type: 'danger' });
+                    return done(null, false, { 
+                        message: process.env.USERNAME_ENUMERATION_FIXED ? 'Incorect username or password.' : 'Incorrect password.' , 
+                        type: 'danger' });
                 }
                 return done(null, user);
             });
