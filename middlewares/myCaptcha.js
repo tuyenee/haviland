@@ -1,19 +1,19 @@
 const request = require('request');
-const failedLoginCacheKey = require('./myPassport').failedLoginCacheKey;
 const NodeCache = require('node-cache');
 const verificationEndpoint = 'www.google.com/recaptcha/api/siteverify';
 const mySecretKey = '6LcUW3wUAAAAACdwNrj4a-YlS3BcHQ6NJRPSEEv5';
-
-console.log('testttt', failedLoginCacheKey)
+const failedLoginKey = require('./myCache').failedLoginKey;
+let _this = this;
 
 const validateCaptcha = function(captchaResponse) {
     return new Promise(function(resolve, reject) {
+        if(!captchaResponse) return reject('Please solve the provided captcha');
         const url = `https://${verificationEndpoint}?secret=${mySecretKey}&response=${captchaResponse}`;
         request(url, function(error, response, body) {
             body = JSON.parse(body);
             // Conditions here
             if(error) {
-                reject('Could not verify captcha, please try again');
+                reject('Could not verify captcha. Hint: your Node server cannot connect to the Google reCaptcha server');
             }
             if(body.success) {
                 resolve(true);
@@ -25,39 +25,44 @@ const validateCaptcha = function(captchaResponse) {
 }
 
 module.exports.verifyCaptcha = function(req, res, done) {
-    const receivedCaptcha = req.body['g-recaptcha-response'] || 'test';
-    validateCaptcha(receivedCaptcha).then(function(success) {
-        done();
-    }, function(message) {
-        req.flash('danger', message);
-        console.log('I sent header here!')
-        res.redirect('/login');
-    }).catch((error) => {
-        console.log('Validating captcha promise: unexpected error:', error);
-    });
-}
-
-const myPassport = require('./myPassport');
-module.exports.shouldRequireCaptcha = function(req, res, done) {
-    console.log('Check if user need to solve captcha');
-    // Read cache for req.body.username
-    const cacheOptions = {
-        stdTTL: 1800, // 30mins
-        checkperiod: 900
-    };
-    const myCacheService = require('./myCache');
-    let myCache = myCacheService.getCacheInstance(req);
-
-    const cacheKey = myPassport.failedLoginCacheKey + req.body.username;
-
-    console.log('reading cache key:', cacheKey);
-    myCache.get(cacheKey, function(error, cache) {
-        console.log('READING CACHE in myCaptcha:', cache, error);
-        if(!error && typeof cache != 'undefined') {
-            console.log('type of count', cache.count);
-            req.requireCaptcha = true;
-            console.log('THIS LOGIN ATTEMPT SEEMS TO BE MALICIOUS - REQUIRE CAPTCHA');
+    _this.shouldRequireCaptcha(req.body.username).then(function(resolved) {
+        if(resolved) {  // resolved true means should require captcha
+            const receivedCaptcha = req.body['g-recaptcha-response'];
+            validateCaptcha(receivedCaptcha).then(function(resolved) {
+                done();
+            }, function(rejected) {
+                req.flash('danger', rejected);
+                res.redirect('/login');
+            }).catch((error) => {
+                console.log('Validating captcha promise: unexpected error:', error);
+            });
+        } else {        // resolved false means captcha should not be required
+            done();
         }
+    }, function(rejected) {
+        done();
+    }).catch(function(error) {
         done();
     })
+}
+
+/*
+ * @return Promise - resolve to true/false
+ */
+module.exports.shouldRequireCaptcha = function(username) {
+    return new Promise(function(resolve, reject) {
+        let myCache = require('./myCache').getCacheInstance();
+        const cacheKey = failedLoginKey + username;
+        myCache.get(cacheKey, function(error, cache) {
+            if(error) {
+                console.log('ERROR:', error)
+                return reject('Cache server is down. Please contact admin');
+            }
+            if(typeof cache == 'undefined' || cache.count < 3) {
+                resolve(false);
+            } else {
+                resolve(true);
+            }
+        })
+    });
 }

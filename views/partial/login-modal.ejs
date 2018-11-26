@@ -14,7 +14,7 @@
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password1" placeholder="Enter password" name="password">
                     </div>
-                    <% if(1 || shouldRequireCaptcha) { %>
+                    <% if(typeof shouldRequireCaptcha != 'undefined' && shouldRequireCaptcha) { %>
                         <div class="form-group">
                             <div class="g-recaptcha" data-sitekey="6LcUW3wUAAAAAHx6uItPxa_rnqg4adBYs3C21D1e"></div>
                         </div>

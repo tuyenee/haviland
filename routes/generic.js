@@ -6,9 +6,9 @@ module.exports = function(app) {
             });
         });
     app.route('/login')
-        .get((req, res) => {
-            res.render('login');
-        });
+        .get(
+            (req, res) => res.render('login', {shouldRequireCaptcha: req.session.shouldRequireCaptcha})
+        );
     app.get('/', (req, res) => {
             res.render('index', {currentUser: req.user});
         }

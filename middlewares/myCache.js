@@ -5,16 +5,14 @@ const cacheOptions = {
     checkperiod: 900
 };
 
-module.exports.getCacheInstance = function(req) {
-    if(typeof req.myFCache === 'undefined') {
-        console.log('I created a new cache instance');
+module.exports.failedLoginKey = 'failedLogin_';
+
+module.exports.getCacheInstance = function() {
+    if(typeof global.myFCache === 'undefined') {
         let myCache = new NodeCache(cacheOptions)
-        req.myFCache = myCache;
-        console.log('List of keys:', myCache.keys());
+        global.myFCache = myCache;
         return myCache;
     } else {
-        console.log('I returned cache in request');
-        console.log('List of keys:', req.myFCache.keys());
-        return req.myFCache;
+        return global.myFCache;
     }
 }
