@@ -105,6 +105,7 @@ module.exports = function(app, passport) {
         /* WITHOUT REGENERATING SESSION AFTER LOGIN */
         app.post(
             '/login',
+            captcha,
             passport.authenticate('local', { 
                 successRedirect: '/',
                 failureRedirect: '/login',
