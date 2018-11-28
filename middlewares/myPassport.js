@@ -2,8 +2,12 @@ let LocalStrategy = require('passport-local').Strategy;
 const NodeCache = require('node-cache');
 const User = require('../models/user');
 const SESSION_FIXATION_FIXED = process.env.SESSION_FIXATION_FIXED;
-const captcha = require('./myCaptcha').verifyCaptcha;
+let captcha = require('./myCaptcha').verifyCaptcha;
 
+/* If LOGIN_BRUTE_FORCE_FIXED flag is not set, we make the captcha to always returns positive */
+if(!process.env.LOGIN_BRUTE_FORCE_FIXED) {
+    captcha = (req, res, done) => done()
+}
 // Logging failed attemp in cache
 const failedLoginCacheKey = require('./myCache').failedLoginKey;
 let myCache = require('./myCache').getCacheInstance();
