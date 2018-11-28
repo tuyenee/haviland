@@ -37,11 +37,14 @@ module.exports.verifyCaptcha = function(req, res, done) {
                 console.log('Validating captcha promise: unexpected error:', error);
             });
         } else {        // resolved false means captcha should not be required
+            console.log('should require captcha resolved false')
             done();
         }
     }, function(rejected) {
+        console.log('should require captcha rejected')
         done();
     }).catch(function(error) {
+        console.log('should require captcha error')
         done();
     })
 }
@@ -54,6 +57,7 @@ module.exports.shouldRequireCaptcha = function(username) {
         let myCache = require('./myCache').getCacheInstance();
         const cacheKey = failedLoginKey + username;
         myCache.get(cacheKey, function(error, cache) {
+            console.log('checking if cache is required', error, cache);
             if(error) {
                 console.log('ERROR:', error)
                 return reject('Cache server is down. Please contact admin');

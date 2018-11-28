@@ -3,6 +3,7 @@ const NodeCache = require('node-cache');
 const User = require('../models/user');
 const SESSION_FIXATION_FIXED = process.env.SESSION_FIXATION_FIXED;
 let captcha = require('./myCaptcha').verifyCaptcha;
+let cacheFailedLogin = require('./myCache').cacheFailedLogin;
 
 /* If LOGIN_BRUTE_FORCE_FIXED flag is not set, we make the captcha to always returns positive */
 if(!process.env.LOGIN_BRUTE_FORCE_FIXED) {
@@ -40,34 +41,7 @@ module.exports = function(app, passport) {
                 }
                 if (!user.validPassword(password)) {
                     // Incorect password. Log to cache this failed login attempt
-                    let cachePromise = new Promise(function(resolve, reject) {
-                        myCache.get(failedLoginCacheKey + username, function(error, cache) {
-                            if(error || typeof cache === 'undefined' || isNaN(cache.count)) {
-                                // cache probably doesn't exist, create new cache blob with count = 1;
-                                blob = {
-                                    user: username,
-                                    count: 1
-                                }
-                                myCache.set(failedLoginCacheKey + username, blob, function(error, success) {
-                                    console.log('No failed login cache was found for', username, ', this looks like 1st failed attempt!');
-                                    if(error) {
-                                        reject('Cache server is down. Please try again');
-                                    }
-                                    resolve(1); // Count of failed attempts
-                                })
-                            } else {
-                                // there have been some failed attemp, we increase the count variable 
-                                cache.count += 1;
-                                console.log('Failed login attempts for', username, cache.count);
-                                myCache.set(failedLoginCacheKey + username, cache, function(error, success) {
-                                    if(error) {
-                                        // TODO: Log if needed
-                                    }
-                                    resolve(cache.count);
-                                })
-                            }
-                        })
-                    });
+                    let cachePromise = cacheFailedLogin(username);
 
                     // Only return when this big promise is resolved/rejected
                     cachePromise.then(function(resolved) {
