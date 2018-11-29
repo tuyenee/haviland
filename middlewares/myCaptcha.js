@@ -25,6 +25,11 @@ const validateCaptcha = function(captchaResponse) {
 }
 
 module.exports.verifyCaptcha = function(req, res, done) {
+    /* If LOGIN_BRUTE_FORCE_FIXED flag is not set, we make the captcha to always returns positive */
+    if(!process.env.LOGIN_BRUTE_FORCE_FIXED) {
+        console.log('Hohoho I turned off captcha protection!');
+        return done();
+    }
     _this.shouldRequireCaptcha(req.body.username).then(function(resolved) {
         if(resolved) {  // resolved true means should require captcha
             const receivedCaptcha = req.body['g-recaptcha-response'];
