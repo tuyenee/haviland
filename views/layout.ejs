@@ -13,10 +13,11 @@
 			<%- include('partial/header') %>
 			<%- include('partial/flash-messages', {messages: getMessages()}) %>
 		</div>
-
 		<div class="jumbotron">
 			<%- body %>
 		</div>
-
+		<div class="footer w-100 text-center mb-5" style="position: fixed; bottom: 0">
+			<%- include('partial/security-switcher') %>
+		</div>
 	</body>
 </html>

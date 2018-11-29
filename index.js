@@ -56,6 +56,8 @@ myPassport(app, passport);
 const genericRoute = require('./routes/generic');
 const usersRoute = require('./routes/users');
 const roomsRoute = require('./routes/rooms');
+const securityToggle = require('./routes/security-toggle');
 genericRoute(app);
+securityToggle(app);
 app.use('/users', usersRoute);
 app.use('/rooms', roomsRoute);
