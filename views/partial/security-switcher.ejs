@@ -1,0 +1,66 @@
+<div id="security-switch">
+    <% if(process.env.SESSION_FIXATION_FIXED) { %>
+        <span class="security-toggle badge badge-primary">SESSION_FIXATION_FIXED</span>
+    <% } else { %>
+        <span href="#" class="security-toggle badge badge-danger">SESSION_FIXATION_FIXED</span>
+    <% } %>
+
+    <% if(process.env.REFLECTED_XSS_FIXED) { %>
+        <span class="security-toggle badge badge-primary">REFLECTED_XSS_FIXED</span>
+    <% } else { %>
+        <span class="security-toggle badge badge-danger">REFLECTED_XSS_FIXED</span>
+    <% } %>
+
+    <% if(process.env.DOM_BASED_XSS_FIXED) { %>
+        <span class="security-toggle badge badge-primary">DOM_BASED_XSS_FIXED</span>
+    <% } else { %>
+        <span class="security-toggle badge badge-danger">DOM_BASED_XSS_FIXED</span>
+    <% } %>
+
+    <% if(process.env.CSRF_FIXED) { %>
+        <span class="security-toggle badge badge-primary">CSRF_FIXED</span>
+    <% } else { %>
+        <span class="security-toggle badge badge-danger">CSRF_FIXED</span>
+    <% } %>
+
+    <% if(process.env.MONGO_QUERY_FIXED) { %>
+        <span class="security-toggle badge badge-primary">MONGO_QUERY_FIXED</span>
+    <% } else { %>
+        <span class="security-toggle badge badge-danger">MONGO_QUERY_FIXED</span>
+    <% } %>
+
+    <% if(process.env.USERNAME_ENUMERATION_FIXED) { %>
+        <span class="security-toggle badge badge-primary">USERNAME_ENUMERATION_FIXED</span>
+    <% } else { %>
+        <span class="security-toggle badge badge-danger">USERNAME_ENUMERATION_FIXED</span>
+    <% } %>
+
+    <% if(process.env.LOGIN_BRUTE_FORCE_FIXED) { %>
+        <span class="security-toggle badge badge-primary">LOGIN_BRUTE_FORCE_FIXED</span>
+    <% } else { %>
+        <span class="security-toggle badge badge-danger">LOGIN_BRUTE_FORCE_FIXED</span>
+    <% } %>
+</div>
+<script>
+    $(document).ready(function() {
+        $('.security-toggle').css('cursor', 'pointer');
+    });
+    $('.security-toggle').on('click', function(e) {
+        var e = $(e.target);
+        console.log(e.text());
+        $.ajax({
+            url: '/security-toggle',
+            method: 'POST',
+            data: {
+                target: e.text()
+            },
+            success: function(res) {
+                if(res.success) {
+                    if(res.newState) e.removeClass('badge-danger').addClass('badge-primary');
+                    if(!res.newState) e.removeClass('badge-primary').addClass('badge-danger');
+                }
+            }
+        });
+        return false;
+    })
+</script>
