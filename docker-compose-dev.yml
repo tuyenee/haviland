@@ -5,8 +5,8 @@ services:
       container_name: app
       restart: always
       build: .
-      #volumes: === Mounting volumes should be removed in production!
-      #  - .:/usr/src/app
+      volumes:
+        - .:/usr/src/app
       ports:
         - "8087:8080"
       links:
@@ -22,7 +22,7 @@ services:
         dockerfile: Dockerfile.mongo-seed
       ports:
         - 27017:27017
-      #restart: always === may cause loop restarting
+      #restart: always
       environment:
         MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
         MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
