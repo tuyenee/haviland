@@ -27,7 +27,7 @@ exports.search = (req, res) => {
     const criteria = {};
     if(req.query.search) {
         const searchRegex = new RegExp(req.query.search, 'i');
-        criteria.adress = searchRegex;
+        criteria.address = searchRegex;
     }
     if(req.query.maxPrice) {
         criteria.$where = "this.price <= " + req.query.maxPrice;

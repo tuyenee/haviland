@@ -34,7 +34,7 @@
                             <% if(process.env.REFLECTED_XSS_FIXED) { %>
                                 value="<%= typeof search === 'string' ? search : '' %>"
                             <% } else { %>
-                                value=<%- typeof search === 'string' ? search : '' %>
+                                value="<%- typeof search === 'string' ? search : '' %>"
                             <% } %>
                         />
                     </div>
@@ -53,7 +53,7 @@
                             <% if(process.env.REFLECTED_XSS_FIXED) { %>
                                 value="<%= typeof maxPrice === 'string' ? maxPrice : '' %>"
                             <% } else { %>
-                                value=<%- typeof maxPrice === 'string' ? maxPrice : '' %>
+                                value="<%- typeof maxPrice === 'string' ? maxPrice : '' %>"
                             <% } %>
                         />
                     </div>
