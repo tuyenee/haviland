@@ -1,7 +1,6 @@
 let LocalStrategy = require('passport-local').Strategy;
 const NodeCache = require('node-cache');
 const User = require('../models/user');
-const SESSION_FIXATION_FIXED = process.env.SESSION_FIXATION_FIXED;
 let captcha = require('./myCaptcha').verifyCaptcha;
 let cacheFailedLogin = require('./myCache').cacheFailedLogin;
 
@@ -68,45 +67,36 @@ module.exports = function(app, passport) {
         }
     ));
     
-    /* If the flag SESSION_FIXATION_FIXED is ON, we will regenerate sessionId after login success */
-    if(SESSION_FIXATION_FIXED) {
-        let sessionRegenerator = function(req, res) {
-            const temp = req.session.passport;
-            req.session.regenerate(function(err) {
-                req.session.passport = temp;
-                req.session.save(function(err) {
-                    res.redirect('/');
-                })
-            })
-        };
-        app.post(
-            '/login',
-            captcha,
-            /* Because Passport hard-coded the "Missing credentials" message - I want to override it by this midleware*/
-            (req, res, done) => {
-                if(!req.body.username || !req.body.password) {
-                    req.flash('danger', 'Missing credentials');
-                    res.redirect('/login')
-                } else {
-                    done();
-                }
-            },
-            passport.authenticate('local', {
-                failureRedirect: '/login',
-                failureFlash: true,
-            })
-            , sessionRegenerator
-        );
-    } else {
-        /* WITHOUT REGENERATING SESSION AFTER LOGIN */
-        app.post(
-            '/login',
-            captcha,
-            passport.authenticate('local', { 
-                successRedirect: '/',
-                failureRedirect: '/login',
-                failureFlash: true
-            })
-        );
+    app.post(
+        '/login',
+        captcha,
+        /* Because Passport hard-coded the "Missing credentials" message - I want to override it by this midleware*/
+        (req, res, done) => {
+            if(!req.body.username || !req.body.password) {
+                req.flash('danger', 'Missing credentials');
+                res.redirect('/login')
+            } else {
+                done();
+            }
+        },
+        passport.authenticate('local', {
+            failureRedirect: '/login',
+            failureFlash: true,
+        })
+        , sessionRegenerator
+    );
+}
+
+const sessionRegenerator = function(req, res) {
+    if(!process.env.SESSION_FIXATION_FIXED) {
+        console.log('Hohoho I am vulnerable to session fixation!')
+        return res.redirect('/');
     }
+    const temp = req.session.passport;
+    req.session.regenerate(function(err) {
+        req.session.passport = temp;
+        req.session.save(function(err) {
+            res.redirect('/');
+        })
+    })
 }
