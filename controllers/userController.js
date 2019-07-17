@@ -6,7 +6,14 @@ exports.index = (req, res) => {
             return console.error(err);
         } else {
             if(process.env.CSRF_FIXED)
-                res.render('users', {users:users, currentUser: req.user, csrfToken: req.csrfToken()});
+                res.render(
+                    'users', 
+                    {
+                        users: users, 
+                        currentUser: req.user, 
+                        csrfToken: ('function' !== typeof req.csrfToken ? undefined : req.csrfToken())
+                    }
+                );
             else
                 res.render('users', {users:users, currentUser: req.user});
         }
@@ -55,7 +62,14 @@ exports.view = (req, res) => {
                 req.flash('danger', 'User not found');
                 return res.redirect('/users');
             }
-            return res.render('user-view', {user: user, currentUser: req.user, csrfToken: req.csrfToken()});
+            return res.render(
+                'user-view', 
+                {
+                    user: user, 
+                    currentUser: req.user, 
+                    csrfToken: ('function' !== typeof req.csrfToken ? undefined : req.csrfToken())
+                }
+            );
         })
 };
 

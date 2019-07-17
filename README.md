@@ -5,6 +5,10 @@ You can Rename the existing .env-sample to .env and modify the default settings 
 2. Run `docker-compose up`
  - App will be serving at port 8087
  - MongoDb will be opening port 27017
+## Usage
+Following test accounts are created by default (username/password:(role)):
+ - jsmith/asdasd:(admin)
+ - jford/asdasd:(normal user)
 ## Known vulnerabilities
 1. Session fixation
 2. CSRF everywhere

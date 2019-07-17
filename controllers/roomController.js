@@ -9,7 +9,7 @@ exports.index = (req, res) => {
             res.render('rooms', {
                 rooms:rooms, 
                 currentUser: req.user, 
-                csrfToken: req.csrfToken()
+                csrfToken: ('function' !== typeof req.csrfToken ? undefined : req.csrfToken())
             });
         }
     });
@@ -43,7 +43,7 @@ exports.search = (req, res) => {
             search: req.query.search, 
             maxPrice: req.query.maxPrice, 
             currentUser: req.user,
-            csrfToken: req.csrfToken()
+            csrfToken: ('function' !== typeof req.csrfToken ? undefined : req.csrfToken())
         });
     });
 };
@@ -85,14 +85,12 @@ exports.view = (req, res) => {
             return res.render('room-view', {
                 room: room, 
                 currentUser: req.user, 
-                csrfToken: req.csrfToken()
+                csrfToken: ('function' !== typeof req.csrfToken ? undefined : req.csrfToken())
             });
         });
 };
 
 exports.edit = (req, res) => {
-    console.log('Updating room:', req.params.id);
-    console.log('Data: ', req.body);
     Room.findByIdAndUpdate(
         req.params.id,
         req.body,

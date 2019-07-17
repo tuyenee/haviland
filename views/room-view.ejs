@@ -2,7 +2,9 @@
 <%- include('partial/flash-messages', {messages: getMessages()}) %>
 <hr/>
 <form action="/rooms/<%= room.id %>" method="POST">
-    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    <% if('undefined' !== typeof csrfToken) { %>
+        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    <% } %>
     <div class="form-group">
         <label for="username">Building</label>
         <input type="text" class="form-control" name="building" value="<%= room.building %>" />
@@ -54,7 +56,7 @@
                     roomId: "<%=room.id%>",
                     userId: fromUserId,
                     action: action,
-                    _csrf: "<%=csrfToken%>"
+                    _csrf: "<%=('undefined' !== typeof csrfToken ? csrfToken : '')%>"
                 },
                 success: function(res) {
                     location.reload();

@@ -6,7 +6,9 @@
             </div>
             <div class="modal-body">
                 <form method="POST" action="/rooms">
-                    <input type="hidden" name="_csrf" value="<%=csrfToken%>"/>
+                    <% if('undefined' !== typeof csrfToken) { %>
+                        <input type="hidden" name="_csrf" value="<%=csrfToken%>"/>
+                    <% } %>
                     <div class="form-group">
                         <label for="user">Building</label>
                         <input type="text" class="form-control" id="building" placeholder="Building" name="building">
@@ -38,7 +40,9 @@
             <div class="modal-body">
                 <p>Are you sure you want to delete this room?</p>
                 <form method="POST" action="/rooms/delete">
-                    <input type="hidden" name="_csrf" value="<%=csrfToken%>"/>
+                    <% if('undefined' !== typeof csrfToken) { %>
+                        <input type="hidden" name="_csrf" value="<%=csrfToken%>"/>
+                    <% } %>
                     <input type="hidden" id="roomId" name="roomId"/>
                     <button type="submit" class="btn btn-danger mt-3 pl-5 pr-5">Sure</button>  
                     <button type="button" class="btn btn-primary mt-3" data-dismiss="modal">Not very sure</button>  
